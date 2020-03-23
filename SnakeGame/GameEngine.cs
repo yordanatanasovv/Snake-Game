@@ -38,22 +38,32 @@ namespace SnakeGame
 
                 if (IsNewCoordinateOnBody(coordinates))
                 {
-                    DisplayGameOver();
+                    break;
+                }
+
+                if (!IsValidCoordinate(coordinates))
+                {
                     break;
                 }
 
                 SnakeMovement(coordinates);
 
                 Thread.Sleep(100);
+
             } while (true);
 
+            DisplayGameOver();
+            Console.ReadKey();
         }
 
-        private void DisplayGameOver()
+        public bool IsValidCoordinate(Coordinates coordinates)
         {
-            Console.Clear();
-            Console.SetCursorPosition((Console.WindowWidth / 2), (Console.WindowHeight / 2));
-            Console.WriteLine("Game Over...");
+            if ((coordinates.X < 0 || coordinates.Y < 0 || coordinates.X >= Console.WindowWidth || coordinates.Y >= Console.WindowHeight))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private void SnakeMovement(Coordinates newCoordinates)
@@ -141,6 +151,16 @@ namespace SnakeGame
             currentApple.Display();
 
             return currentApple;
+        }
+
+        private void DisplayGameOver()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.SetCursorPosition((Console.WindowWidth / 2) - 10, (Console.WindowHeight / 2) - 3);
+            Console.WriteLine("Game Over..");
+            Console.SetCursorPosition((Console.WindowWidth / 2) - 10, (Console.WindowHeight / 2) - 2);
+            Console.WriteLine("Try again!");
         }
     }
 }
