@@ -35,19 +35,30 @@ namespace SnakeGame
                 }
                 var coordinates = GetCoordinates(direction);
 
-                Coordinates newSnakeHeadPosition = coordinates;
-                Coordinates snakeElementToRemove = Snake.Body[0];
-                Snake.Body.Remove(snakeElementToRemove);
-                Snake.Body.Add(newSnakeHeadPosition);
-
-                PrintSnake();
-
-                Console.SetCursorPosition(snakeElementToRemove.X, snakeElementToRemove.Y);
-                Console.Write(" ");
+                SnakeMovement(coordinates);
 
                 Thread.Sleep(100);
             } while (true);
 
+        }
+
+        private void SnakeMovement(Coordinates newCoordinates)
+        {
+            Coordinates newSnakeHeadPosition = newCoordinates;
+            Coordinates snakeElementToRemove = Snake.Body[0];
+            Snake.Body.Remove(snakeElementToRemove);
+            Snake.Body.Add(newSnakeHeadPosition);
+
+            PrintSnake();
+
+            Console.SetCursorPosition(snakeElementToRemove.X, snakeElementToRemove.Y);
+            Console.Write(" ");
+
+            if (currentApple.X == Snake.Body[Snake.Body.Count - 1].X && currentApple.Y == Snake.Body[Snake.Body.Count - 1].Y)
+            {
+                Snake.Body.Add(newCoordinates);
+                currentApple = GenerateApple();
+            }
         }
 
         private Coordinates GetCoordinates(ConsoleKeyInfo direction)
