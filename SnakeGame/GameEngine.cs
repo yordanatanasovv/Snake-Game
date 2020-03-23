@@ -7,12 +7,18 @@ namespace SnakeGame
 {
     public class GameEngine
     {
+        private Random Random { get; set; }
+
         private Snake Snake { get; set; }
+
+        private Apple currentApple { get; set; }
 
         public GameEngine()
         {
             this.Snake = new Snake();
+            this.currentApple = GenerateApple();
         }
+
         public void Start()
         {
             Console.CursorVisible = false;
@@ -44,15 +50,6 @@ namespace SnakeGame
 
         }
 
-        private void PrintSnake()
-        {
-            foreach (var element in Snake.Body)
-            {
-                Console.SetCursorPosition(element.X, element.Y);
-                Console.Write("#");
-            }
-        }
-
         private Coordinates GetCoordinates(ConsoleKeyInfo direction)
         {
             Coordinates coordinates = null;
@@ -75,6 +72,24 @@ namespace SnakeGame
             }
 
             return coordinates;
+        }
+
+        private void PrintSnake()
+        {
+            foreach (var element in Snake.Body)
+            {
+                Console.SetCursorPosition(element.X, element.Y);
+                Console.Write("#");
+            }
+        }
+
+        private Apple GenerateApple()
+        {
+            this.Random = new Random();
+            Apple currentApple = new Apple(Random.Next(0, Console.WindowWidth), Random.Next(0, Console.WindowHeight));
+            currentApple.Display();
+
+            return currentApple;
         }
     }
 }
