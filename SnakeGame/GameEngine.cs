@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace SnakeGame
@@ -21,7 +19,7 @@ namespace SnakeGame
 
         public void Start()
         {
-            Console.CursorVisible = false;
+            GameConfiguration.ConfigureGame();
 
             PrintSnake();
 
@@ -36,53 +34,19 @@ namespace SnakeGame
                 }
                 var coordinates = GetCoordinates(direction);
 
-                if (IsNewCoordinateOnBody(coordinates))
-                {
-                    break;
-                }
-
-                if (!IsValidCoordinate(coordinates))
+                if (IsNewCoordinateOnBody(coordinates) || !IsValidCoordinate(coordinates))
                 {
                     break;
                 }
 
                 SnakeMovement(coordinates);
 
-                Thread.Sleep(100);
+                Thread.Sleep(GameConfiguration.gameSpeed);
 
             } while (true);
 
             DisplayGameOver();
             Console.ReadKey();
-        }
-
-        public bool IsValidCoordinate(Coordinates coordinates)
-        {
-            if ((coordinates.X < 0 || coordinates.Y < 0 || coordinates.X >= Console.WindowWidth || coordinates.Y >= Console.WindowHeight))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private void SnakeMovement(Coordinates newCoordinates)
-        {
-            Coordinates newSnakeHeadPosition = newCoordinates;
-            Coordinates snakeElementToRemove = Snake.Body[0];
-            Snake.Body.Remove(snakeElementToRemove);
-            Snake.Body.Add(newSnakeHeadPosition);
-
-            PrintSnake();
-
-            Console.SetCursorPosition(snakeElementToRemove.X, snakeElementToRemove.Y);
-            Console.Write(" ");
-
-            if (currentApple.X == Snake.Body[Snake.Body.Count - 1].X && currentApple.Y == Snake.Body[Snake.Body.Count - 1].Y)
-            {
-                Snake.Body.Add(newCoordinates);
-                currentApple = GenerateApple();
-            }
         }
 
         private Coordinates GetCoordinates(ConsoleKeyInfo direction)
@@ -109,6 +73,25 @@ namespace SnakeGame
             return coordinates;
         }
 
+        private void SnakeMovement(Coordinates newCoordinates)
+        {
+            Coordinates newSnakeHeadPosition = newCoordinates;
+            Coordinates snakeElementToRemove = Snake.Body[0];
+            Snake.Body.Remove(snakeElementToRemove);
+            Snake.Body.Add(newSnakeHeadPosition);
+
+            PrintSnake();
+
+            Console.SetCursorPosition(snakeElementToRemove.X, snakeElementToRemove.Y);
+            Console.Write(" ");
+
+            if (currentApple.X == Snake.Body[Snake.Body.Count - 1].X && currentApple.Y == Snake.Body[Snake.Body.Count - 1].Y)
+            {
+                Snake.Body.Add(newCoordinates);
+                currentApple = GenerateApple();
+            }
+        }
+
         private bool AreDirectionsOpposite(ConsoleKeyInfo direction, ConsoleKeyInfo newKey)
         {
             if (newKey.Key == ConsoleKey.LeftArrow && direction.Key == ConsoleKey.RightArrow ||
@@ -124,15 +107,25 @@ namespace SnakeGame
 
         private bool IsNewCoordinateOnBody(Coordinates coordinates)
         {
-            foreach (var element in Snake.Body)
+            foreach (var snakePart in Snake.Body)
             {
-                if (coordinates.X == element.X && coordinates.Y == element.Y)
+                if (coordinates.X == snakePart.X && coordinates.Y == snakePart.Y)
                 {
                     return true;
                 }
             }
 
             return false;
+        }
+
+        private bool IsValidCoordinate(Coordinates coordinates)
+        {
+            if ((coordinates.X < 0 || coordinates.Y < 0 || coordinates.X >= Console.WindowWidth || coordinates.Y >= Console.WindowHeight))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private void PrintSnake()
