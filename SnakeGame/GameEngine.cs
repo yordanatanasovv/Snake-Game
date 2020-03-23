@@ -31,7 +31,9 @@ namespace SnakeGame
             {
                 if (Console.KeyAvailable)
                 {
-                    direction = Console.ReadKey(true);
+                    var newKey = Console.ReadKey(true);
+                    //AreDirectionsOpposite(direction, newKey)
+                    direction = AreDirectionsOpposite(direction, newKey) ? direction : newKey;
                 }
                 var coordinates = GetCoordinates(direction);
 
@@ -40,6 +42,19 @@ namespace SnakeGame
                 Thread.Sleep(100);
             } while (true);
 
+        }
+
+        private bool AreDirectionsOpposite(ConsoleKeyInfo direction, ConsoleKeyInfo newKey)
+        {
+            if (newKey.Key == ConsoleKey.LeftArrow && direction.Key == ConsoleKey.RightArrow ||
+                newKey.Key == ConsoleKey.UpArrow && direction.Key == ConsoleKey.DownArrow ||
+                newKey.Key == ConsoleKey.DownArrow && direction.Key == ConsoleKey.UpArrow ||
+                newKey.Key == ConsoleKey.RightArrow && direction.Key == ConsoleKey.LeftArrow)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void SnakeMovement(Coordinates newCoordinates)
