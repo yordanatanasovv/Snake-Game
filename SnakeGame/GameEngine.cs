@@ -32,10 +32,15 @@ namespace SnakeGame
                 if (Console.KeyAvailable)
                 {
                     var newKey = Console.ReadKey(true);
-                    //AreDirectionsOpposite(direction, newKey)
                     direction = AreDirectionsOpposite(direction, newKey) ? direction : newKey;
                 }
                 var coordinates = GetCoordinates(direction);
+
+                if (IsNewCoordinateOnBody(coordinates))
+                {
+                    DisplayGameOver();
+                    break;
+                }
 
                 SnakeMovement(coordinates);
 
@@ -44,17 +49,11 @@ namespace SnakeGame
 
         }
 
-        private bool AreDirectionsOpposite(ConsoleKeyInfo direction, ConsoleKeyInfo newKey)
+        private void DisplayGameOver()
         {
-            if (newKey.Key == ConsoleKey.LeftArrow && direction.Key == ConsoleKey.RightArrow ||
-                newKey.Key == ConsoleKey.UpArrow && direction.Key == ConsoleKey.DownArrow ||
-                newKey.Key == ConsoleKey.DownArrow && direction.Key == ConsoleKey.UpArrow ||
-                newKey.Key == ConsoleKey.RightArrow && direction.Key == ConsoleKey.LeftArrow)
-            {
-                return true;
-            }
-
-            return false;
+            Console.Clear();
+            Console.SetCursorPosition((Console.WindowWidth / 2), (Console.WindowHeight / 2));
+            Console.WriteLine("Game Over...");
         }
 
         private void SnakeMovement(Coordinates newCoordinates)
@@ -98,6 +97,32 @@ namespace SnakeGame
             }
 
             return coordinates;
+        }
+
+        private bool AreDirectionsOpposite(ConsoleKeyInfo direction, ConsoleKeyInfo newKey)
+        {
+            if (newKey.Key == ConsoleKey.LeftArrow && direction.Key == ConsoleKey.RightArrow ||
+                newKey.Key == ConsoleKey.UpArrow && direction.Key == ConsoleKey.DownArrow ||
+                newKey.Key == ConsoleKey.DownArrow && direction.Key == ConsoleKey.UpArrow ||
+                newKey.Key == ConsoleKey.RightArrow && direction.Key == ConsoleKey.LeftArrow)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsNewCoordinateOnBody(Coordinates coordinates)
+        {
+            foreach (var element in Snake.Body)
+            {
+                if (coordinates.X == element.X && coordinates.Y == element.Y)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void PrintSnake()
